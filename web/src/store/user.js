@@ -7,6 +7,7 @@ export default {
         photo: "",
         token: "",
         is_login: false,
+        pulling_info: true,  // 是否正在从云端拉取信息
     },
     getters: {
     },
@@ -26,7 +27,10 @@ export default {
             state.photo = "";
             state.token = "";
             state.is_login = false;
-        }
+        },
+        updatePullingInfo(state, pulling_info) {
+            state.pulling_info = pulling_info;
+        },
     },
     actions: { // 修改state的函数
         login(context, data) {
@@ -39,6 +43,7 @@ export default {
                 },
                 success(resp) {
                     if (resp.error_message === "success") {
+                        localStorage.setItem("jwt_token", resp.token);
                         // 在 actions 中调用 mutations 中的函数 使用 commit() 方法
                         context.commit("updateToken", resp.token);
                         data.success(resp);
@@ -79,6 +84,7 @@ export default {
             });
         },
         logout(context) {
+            localStorage.removeItem("jwt_token");
             context.commit("logout");
         }
     },
